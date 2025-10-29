@@ -4,7 +4,7 @@ async function getClima(req, res) {
     try {
         const cidade = req.query.cidade || 'Sao_Paulo';
         const resultado = await buscarClima(cidade);
-        res.status(200).json({result: resultado});
+        res.status(200).json(resultado);
     } catch (error) {
         res.status(500).json({erro: error.message});
     }
@@ -15,7 +15,7 @@ async function getPrevisao(req, res) {
         const cidade = req.query.cidade || 'Sao_Paulo';
         const dias = req.query.dias || 3;
         const resultado = await buscarPrevisao(cidade, dias);
-        res.status(200).json({result: resultado});
+        res.status(200).json(resultado);
     } catch (error) {
         res.status(500).json({erro: error.message});
     }
