@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const API_KEY = 'acac7a3616df457d8f711550252810';
 
 async function buscarClima(cidade) {
-    const url = `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${cidade}&lang=pt`;
+    const url = `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${cidade}&aqi=yes&lang=pt`;
     const response = await fetch(url);
     const data = await response.json();
 
@@ -18,7 +18,11 @@ async function buscarClima(cidade) {
         umidade: data.current.humidity,
         vento_kph: data.current.wind_kph,
         icone: `https:${data.current.condition.icon}`,
-        atualizado_em: data.current.last_updated
+        atualizado_em: data.current.last_updated,
+        qualidade_ar: {
+            epa: data.current.air_quality["us-epa-index"],
+            defra: data.current.air_quality["gb-defra-index"]
+        }
     }
 }
 
