@@ -1,8 +1,10 @@
 const fetch = require('node-fetch');
 const API_KEY = 'acac7a3616df457d8f711550252810';
+const { safeEncode } = require("../utils/encode");
 
 async function buscarClima(cidade) {
-    const url = `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${cidade}&aqi=yes&lang=pt`;
+    const cidadeEncoded = safeEncode(cidade);
+    const url = `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${cidadeEncoded}&aqi=yes&lang=pt`;
     const response = await fetch(url);
     const data = await response.json();
 

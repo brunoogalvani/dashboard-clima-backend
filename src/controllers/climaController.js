@@ -2,7 +2,7 @@ const { buscarClima, buscarPrevisao } = require('../services/climaService.js');
 
 async function getClima(req, res) {
     try {
-        const cidade = req.query.cidade || 'Sao_Paulo';
+        const cidade = req.query.cidade || 'São Paulo';
         const resultado = await buscarClima(cidade);
         res.status(200).json(resultado);
     } catch (error) {
@@ -12,7 +12,7 @@ async function getClima(req, res) {
 
 async function getPrevisao(req, res) {
     try {
-        const cidade = req.query.cidade || 'Sao_Paulo';
+        const cidade = req.query.cidade || 'São Paulo';
         const dias = req.query.dias || 3;
         const resultado = await buscarPrevisao(cidade, dias);
         res.status(200).json(resultado);
