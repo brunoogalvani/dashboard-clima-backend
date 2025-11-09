@@ -21,10 +21,8 @@ async function buscarClima(cidade) {
         vento_kph: data.current.wind_kph,
         icone: `https:${data.current.condition.icon}`,
         atualizado_em: data.current.last_updated,
-        qualidade_ar: {
-            epa: data.current.air_quality["us-epa-index"],
-            defra: data.current.air_quality["gb-defra-index"]
-        }
+        horario_local: data.location.localtime,
+        fuso_horario: data.location.tz_id
     }
 }
 
@@ -59,6 +57,8 @@ async function buscarPrevisao(cidade, dias) {
         cidade: data.location.name,
         pais: data.location.country,
         atualizado_em: data.current.last_updated,
+        horario_local: data.location.localtime,
+        fuso_horario: data.location.tz_id,
         dias: previsao
     }
 }
