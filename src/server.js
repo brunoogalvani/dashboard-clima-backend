@@ -4,6 +4,7 @@ const climaRoutes = require('./routes/climaRoutes.js');
 const qualidadeRoutes = require('./routes/qualidadeRoutes.js');
 const incendioRoutes = require("./routes/incendiosRoutes.js");
 const mapaRoutes = require("./routes/mapaRoutes.js");
+const dadosRoutes = require("./routes/dadosRoutes.js")
 
 const app = express();
 
@@ -15,5 +16,6 @@ app.use('/api', climaRoutes);
 app.use('/api', qualidadeRoutes);
 app.use('/api', incendioRoutes);
 app.use("/api", mapaRoutes);
+app.use("/api", dadosRoutes);
 
 app.listen(3000, () => console.log('Middleware rodando na porta 3000'));

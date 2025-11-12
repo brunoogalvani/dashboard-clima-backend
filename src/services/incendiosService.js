@@ -40,7 +40,7 @@ exports.buscarIncendiosPorCidade = async (cidade) => {
   try {
     // 1) Geocoding com Nominatim
     const geoRes = await axios.get(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${cidadeEncoded}`
+      `https://nominatim.openstreetmap.org/search?format=json&q=${cidade}`
     );
     if (!Array.isArray(geoRes.data) || geoRes.data.length === 0) {
       throw new Error("Cidade não encontrada via Nominatim");
