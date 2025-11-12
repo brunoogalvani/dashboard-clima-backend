@@ -6,7 +6,8 @@ exports.getIncendios = async (req, res) => {
 
   try {
     const result = await buscarIncendiosPorCidade(cidade);
-    return res.json(result);
+    // Retorna apenas a lista, para o frontend renderizar direto
+    return res.json(result.incendios || []);
   } catch (err) {
     console.error("Erro no controller NASA FIRMS:", err.message);
     return res.status(500).json({ error: "Falha ao consultar a NASA FIRMS" });
