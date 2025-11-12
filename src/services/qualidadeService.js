@@ -15,6 +15,11 @@ async function buscarQualidadeAr(cidade) {
   const aqi = data.data.aqi;
   const info = data.data;
 
+  const dateTimeOriginal = info.time.s;
+  const [date, hora] = dateTimeOriginal.split(" ");
+  const horaFormatada = hora.slice(0,5);
+  const dateTimeFormatado = `${date} ${horaFormatada}`
+
   return {
     cidade: info.city.name,
     aqi,
@@ -25,7 +30,7 @@ async function buscarQualidadeAr(cidade) {
           valor: info.iaqi[chave].v,
         }))
       : [],
-    hora_atualizada: info.time.s,
+    hora_atualizada: dateTimeFormatado
   };
 }
 
