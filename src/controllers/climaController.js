@@ -14,6 +14,9 @@ async function getPrevisao(req, res) {
     try {
         const cidade = req.query.cidade || 'São Paulo';
         const dias = req.query.dias || 3;
+
+        if (dias < 1 || dias > 14) return res.status(400).json({erro: "Digite um limite de dias válido (Entre 1 e 14)"})
+
         const resultado = await buscarPrevisao(cidade, dias);
         res.status(200).json(resultado);
     } catch (error) {

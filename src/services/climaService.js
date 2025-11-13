@@ -1,10 +1,10 @@
 const fetch = require('node-fetch');
 const API_KEY = 'acac7a3616df457d8f711550252810';
-const { safeEncode } = require("../utils/encode");
+const { getCoordenadasService } = require('./mapaService');
 
 async function buscarClima(cidade) {
-    const cidadeEncoded = safeEncode(cidade);
-    const url = `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${cidadeEncoded}&aqi=yes&lang=pt`;
+    const { lat, lon } = await getCoordenadasService(cidade);
+    const url = `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${lat},${lon}&aqi=yes&lang=pt`;
     const response = await fetch(url);
     const data = await response.json();
 
@@ -21,13 +21,11 @@ async function buscarClima(cidade) {
         vento_kph: data.current.wind_kph,
         icone: `https:${data.current.condition.icon}`,
         atualizado_em: data.current.last_updated,
-        horario_local: data.location.localtime,
         fuso_horario: data.location.tz_id
     }
 }
 
 async function buscarPrevisao(cidade, dias) {
-    const limiteDias = Math.min(Math.max(parseInt(dias), 1), 14);
     const url = `http://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${cidade}&days=${dias}&lang=pt`;
     const response = await fetch(url);
     const data = await response.json();

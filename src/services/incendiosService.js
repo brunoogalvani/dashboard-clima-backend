@@ -1,6 +1,6 @@
 const axios = require("axios");
 const Papa = require("papaparse");
-const { safeEncode } = require("../utils/encode");
+const { getCoordenadasService } = require("./mapaService");
 
 const FIRMS_CSV_URLS = [
   // caminho mais usado para MODIS 24h (pode existir variação por versão)
@@ -36,16 +36,8 @@ function construirBBox(lat, lon, delta = 2) {
 }
 
 exports.buscarIncendiosPorCidade = async (cidade) => {
-  const cidadeEncoded = safeEncode(cidade);
   try {
-    // 1) Geocoding com Nominatim
-    const geoRes = await axios.get(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${cidade}`
-    );
-    if (!Array.isArray(geoRes.data) || geoRes.data.length === 0) {
-      throw new Error("Cidade não encontrada via Nominatim");
-    }
-    const { lat, lon } = geoRes.data[0];
+    const { lat, lon } = await getCoordenadasService(cidade);
 
     // 2) Baixar CSV FIRMS
     const csvText = await baixarCsvFirms();
