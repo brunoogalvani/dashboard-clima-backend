@@ -3,9 +3,7 @@ const Papa = require("papaparse");
 const { getCoordenadasService } = require("./mapaService");
 
 const FIRMS_CSV_URLS = [
-  // caminho mais usado para MODIS 24h (pode existir variação por versão)
   "https://firms.modaps.eosdis.nasa.gov/data/active_fire/modis-c6.1/csv/MODIS_C6_1_Global_24h.csv",
-  // fallback (algumas instalações/versões usam outra path)
   "https://firms.modaps.eosdis.nasa.gov/data/active_fire/modis-c6/csv/MODIS_C6_24h.csv"
 ];
 
@@ -20,7 +18,6 @@ async function baixarCsvFirms() {
       console.warn(`Falha ao baixar FIRMS CSV (${url}): ${err.message}`);
     }
   }
-  // se nenhuma URL funcionou, lança o último erro
   throw lastError || new Error("Não foi possível baixar CSV FIRMS");
 }
 
@@ -39,15 +36,12 @@ exports.buscarIncendiosPorCidade = async (cidade) => {
   try {
     const { lat, lon } = await getCoordenadasService(cidade);
 
-    // 2) Baixar CSV FIRMS
     const csvText = await baixarCsvFirms();
 
-    // 3) Parse CSV -> JSON
     const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
     if (!parsed || !parsed.data) throw new Error("CSV inválido ou parse falhou");
 
-    // 4) Filtrar por bounding box (ajuste delta conforme necessidade)
-    const bbox = construirBBox(lat, lon, 2); // 2 graus ~ ~200km dependendo da latitude
+    const bbox = construirBBox(lat, lon, 2);
     const nearby = parsed.data.filter((item) => {
       const latI = parseFloat(item.latitude);
       const lonI = parseFloat(item.longitude);
@@ -60,7 +54,6 @@ exports.buscarIncendiosPorCidade = async (cidade) => {
       );
     });
 
-    // 5) Mapeia resultado para algo limpo que o frontend usa
     const mapped = nearby.map((it) => ({
       latitude: it.latitude,
       longitude: it.longitude,
@@ -81,7 +74,7 @@ exports.buscarIncendiosPorCidade = async (cidade) => {
       lon,
       bbox,
       total_incendios: mapped.length,
-      incendios: mapped.slice(0, 50), // limitar para não enviar datasets enormes
+      incendios: mapped.slice(0, 50),
       fonte: "NASA FIRMS (MODIS/VIIRS) - CSV"
     };
   } catch (err) {

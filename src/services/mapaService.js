@@ -7,7 +7,7 @@ async function getCoordenadasService(cidade) {
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodedCity}`;
 
     const response = await axios.get(url, {
-      headers: { "User-Agent": "PIMA-Dashboard/1.0" }, // importante para evitar bloqueios
+      headers: { "User-Agent": "PIMA-Dashboard/1.0" },
     });
 
     const data = response.data;
