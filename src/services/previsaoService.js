@@ -1,8 +1,20 @@
 const fetch = require('node-fetch');
 const { getCoordenadasService } = require('./mapaService');
 
-async function buscarPrevisao(cidade) {
-    const { lat,lon } = await getCoordenadasService(cidade);
+async function buscarPrevisao(input) {
+    let lat, lon;
+
+    if (typeof input === "string") {
+        const coords = await getCoordenadasService(input);
+        lat = coords.lat;
+        lon = coords.lon;
+    } else if (typeof input === "object" && input.lat && input.lon) {
+        lat = input.lat;
+        lon = input.lon;
+    } else {
+        throw new Error("Parâmetros inválidos para busca de previsão.");
+    }
+
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&forecast_days=16&timezone=auto&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunset,sunrise`;
     const response = await fetch(url);
     const data = await response.json();

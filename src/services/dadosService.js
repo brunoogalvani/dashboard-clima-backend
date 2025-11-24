@@ -49,8 +49,8 @@ async function buscarDadosPorCoordenadas(lat, lon) {
     // Note que passamos 'cidadeDoClique' para previsao e qualidade, e 'lat,lon' para clima e incendios.
     const resultados = await Promise.allSettled([
         buscarClima(`${lat},${lon}`),
-        buscarPrevisao(cidadeDoClique),
-        buscarQualidadeAr(cidadeDoClique),
+        buscarPrevisao({lat, lon}),
+        buscarQualidadeAr(`geo:${lat};${lon}`),
         buscarIncendiosPorCidade(`${lat},${lon}`)
     ]);
 
