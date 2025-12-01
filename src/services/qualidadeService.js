@@ -19,11 +19,18 @@ async function buscarQualidadeAr(cidade) {
   const [date, hora] = dateTimeOriginal.split(" ");
   const horaFormatada = hora.slice(0,5);
   const dateTimeFormatado = `${date} ${horaFormatada}`
+  
+  let dominanciaFormatada;
+  if (info.dominentpol === 'pm25') {
+    dominanciaFormatada = 'pm2.5';
+  } else {
+    dominanciaFormatada = info.dominentpol;
+  }
 
   return {
     cidade: info.city.name,
     aqi,
-    dominancia: info.dominentpol,
+    dominancia: dominanciaFormatada,
     poluentes: info.iaqi
       ? Object.keys(info.iaqi).map((chave) => ({
           tipo: chave,
