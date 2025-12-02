@@ -40,6 +40,7 @@ async function buscarQualidadeAr(cidade) {
           tipo: chave,
           valor: info.iaqi[chave].v,
         }))
+      .sort((a, b) => b.valor - a.valor)
       : [],
     hora_atualizada: dateTimeFormatado
   };
