@@ -27,21 +27,34 @@ async function buscarQualidadeAr(cidade) {
     dominanciaFormatada = info.dominentpol;
   }
 
-  const pols = ['co', 'no2', 'o3', 'pm10', 'pm25'];
+  const pols = [
+    {
+      "tipo": "co",
+      "valor": info.iaqi.co?.v || null
+    },
+    {
+      "tipo": "no2",
+      "valor": info.iaqi.no2?.v || null
+    },
+    {
+      "tipo": "o3",
+      "valor": info.iaqi.o3?.v || null
+    },
+    {
+      "tipo": "pm10",
+      "valor": info.iaqi.pm10?.v || null
+    },
+    {
+      "tipo": "pm25",
+      "valor": info.iaqi.pm25?.v || null
+    }
+  ]
 
   return {
     cidade: info.city.name,
     aqi,
     dominancia: dominanciaFormatada,
-    poluentes: info.iaqi
-      ? Object.keys(info.iaqi)
-      .filter(chave => pols.includes(chave))
-      .map((chave) => ({
-          tipo: chave,
-          valor: info.iaqi[chave].v,
-        }))
-      .sort((a, b) => b.valor - a.valor)
-      : [],
+    poluentes: pols.sort((a, b) => b.valor - a.valor),
     hora_atualizada: dateTimeFormatado
   };
 }
