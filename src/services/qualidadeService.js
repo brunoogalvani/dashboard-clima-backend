@@ -27,12 +27,16 @@ async function buscarQualidadeAr(cidade) {
     dominanciaFormatada = info.dominentpol;
   }
 
+  const pols = ['co', 'no2', 'o3', 'pm10', 'pm25'];
+
   return {
     cidade: info.city.name,
     aqi,
     dominancia: dominanciaFormatada,
     poluentes: info.iaqi
-      ? Object.keys(info.iaqi).map((chave) => ({
+      ? Object.keys(info.iaqi)
+      .filter(chave => pols.includes(chave))
+      .map((chave) => ({
           tipo: chave,
           valor: info.iaqi[chave].v,
         }))
