@@ -1,10 +1,9 @@
 const fetch = require("node-fetch");
-const API_KEY = "9cb6b1b2f42dc82345b394e85721c9059c153951";
 const { safeEncode } = require("../utils/encode");
 
 async function buscarQualidadeAr(cidade) {
   const cidadeEncoded = safeEncode(cidade);
-  const url = `https://api.waqi.info/feed/${cidadeEncoded}/?token=${API_KEY}`;
+  const url = `https://api.waqi.info/feed/${cidadeEncoded}/?token=${process.env.QUALIDADE_API}`;
   const response = await fetch(url);
   const data = await response.json();
 

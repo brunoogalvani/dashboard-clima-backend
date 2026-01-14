@@ -1,10 +1,9 @@
 const fetch = require('node-fetch');
-const API_KEY = 'acac7a3616df457d8f711550252810';
 const { getCoordenadasService } = require('./mapaService');
 
 async function buscarClima(cidade) {
     const { lat, lon } = await getCoordenadasService(cidade);
-    const url = `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${lat},${lon}&aqi=yes&lang=pt`;
+    const url = `http://api.weatherapi.com/v1/current.json?key=${process.env.CLIMA_API}&q=${lat},${lon}&aqi=yes&lang=pt`;
     const response = await fetch(url);
     const data = await response.json();
 

@@ -6,6 +6,9 @@ const incendioRoutes = require('./routes/incendiosRoutes.js');
 const mapaRoutes = require('./routes/mapaRoutes.js');
 const previsaoRoutes = require('./routes/previsaoRoutes.js');
 const dadosRoutes = require('./routes/dadosRoutes.js')
+const dotenv = require('dotenv');
+
+dotenv.config()
 
 const app = express();
 
@@ -20,4 +23,8 @@ app.use("/api", mapaRoutes);
 app.use("/api", previsaoRoutes);
 app.use("/api", dadosRoutes);
 
-app.listen(3000, () => console.log('Middleware rodando na porta 3000'));
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(3000, () => console.log('Middleware rodando na porta 3000'));
+}
+
+module.exports = app;
