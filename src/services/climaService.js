@@ -1,7 +1,17 @@
 const fetch = require('node-fetch');
 const { getCoordenadasService } = require('./mapaService');
+const cache = require('../utils/cache')
+
 
 async function buscarClima(cidade) {
+    const cacheKey = `clima:${cidade.toLowerCase().trim()}`;
+    const cached = cache.get(cacheKey);
+    if (cached) {
+        console.log(`[CACHE HIT] ${cacheKey}`)
+        return cached;
+    }
+
+
     const { lat, lon } = await getCoordenadasService(cidade);
     const url = `http://api.weatherapi.com/v1/current.json?key=${process.env.CLIMA_API}&q=${lat},${lon}&aqi=yes&lang=pt`;
     const response = await fetch(url);
@@ -9,7 +19,7 @@ async function buscarClima(cidade) {
 
     if (data.error) throw new Error(data.error.message);
 
-    return {
+    const resultado = {
         cidade: data.location.name,
         pais: data.location.country,
         temperatura: data.current.temp_c,
@@ -21,7 +31,9 @@ async function buscarClima(cidade) {
         icone: `https:${data.current.condition.icon}`,
         atualizado_em: data.current.last_updated,
         fuso_horario: data.location.tz_id
-    }
+    };
+    cache.set(cacheKey, resultado, 600);
+    return resultado;
 }
 
 module.exports = { buscarClima };

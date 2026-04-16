@@ -1,61 +1,48 @@
-const fetch = require("node-fetch");
-const { safeEncode } = require("../utils/encode");
+ const fetch = require("node-fetch");
+  const { safeEncode } = require("../utils/encode");
+  const cache = require('../utils/cache');
 
-async function buscarQualidadeAr(cidade) {
-  const cidadeEncoded = safeEncode(cidade);
-  const url = `https://api.waqi.info/feed/${cidadeEncoded}/?token=${process.env.QUALIDADE_API}`;
-  const response = await fetch(url);
-  const data = await response.json();
-
-  if (data.status !== "ok") {
-    throw new Error(data.data || "Erro ao buscar qualidade do ar");
-  }
-
-  const aqi = data.data.aqi;
-  const info = data.data;
-
-  const dateTimeOriginal = info.time.s;
-  const [date, hora] = dateTimeOriginal.split(" ");
-  const horaFormatada = hora.slice(0,5);
-  const dateTimeFormatado = `${date} ${horaFormatada}`
-  
-  let dominanciaFormatada;
-  if (info.dominentpol === 'pm25') {
-    dominanciaFormatada = 'pm2.5';
-  } else {
-    dominanciaFormatada = info.dominentpol;
-  }
-
-  const pols = [
-    {
-      "tipo": "co",
-      "valor": info.iaqi.co?.v || null
-    },
-    {
-      "tipo": "no2",
-      "valor": info.iaqi.no2?.v || null
-    },
-    {
-      "tipo": "o3",
-      "valor": info.iaqi.o3?.v || null
-    },
-    {
-      "tipo": "pm10",
-      "valor": info.iaqi.pm10?.v || null
-    },
-    {
-      "tipo": "pm25",
-      "valor": info.iaqi.pm25?.v || null
+  async function buscarQualidadeAr(cidade) {
+    const cacheKey = `qualidade:${cidade.toString().toLowerCase().trim()}`;
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      console.log(`[CACHE HIT] ${cacheKey}`);
+      return cached;
     }
-  ]
 
-  return {
-    cidade: info.city.name,
-    aqi,
-    dominancia: dominanciaFormatada,
-    poluentes: pols.sort((a, b) => b.valor - a.valor),
-    hora_atualizada: dateTimeFormatado
-  };
-}
+    const cidadeEncoded = safeEncode(cidade);
+    const url = `https://api.waqi.info/feed/${cidadeEncoded}/?token=${process.env.QUALIDADE_API}`;
+    const response = await fetch(url);
+    const data = await response.json();
 
-module.exports = { buscarQualidadeAr };
+    if (data.status !== "ok") {
+      throw new Error(data.data || "Erro ao buscar qualidade do ar");
+    }
+
+    const info = data.data;
+    const [date, hora] = info.time.s.split(" ");
+    const dateTimeFormatado = `${date} ${hora.slice(0,5)}`;
+
+    const dominanciaFormatada = info.dominentpol === 'pm25' ? 'pm2.5' : info.dominentpol;
+
+    const pols = [
+      { tipo: "co",   valor: info.iaqi.co?.v   || null },
+      { tipo: "no2",  valor: info.iaqi.no2?.v  || null },
+      { tipo: "o3",   valor: info.iaqi.o3?.v   || null },
+      { tipo: "pm10", valor: info.iaqi.pm10?.v || null },
+      { tipo: "pm25", valor: info.iaqi.pm25?.v || null }
+    ];
+
+    const resultado = {
+      cidade: info.city.name,
+      aqi: info.aqi,
+      dominancia: dominanciaFormatada,
+      poluentes: pols.sort((a, b) => b.valor - a.valor),
+      hora_atualizada: dateTimeFormatado
+    };
+
+    cache.set(cacheKey, resultado, 1800);
+    return resultado;
+  }
+
+  module.exports = { buscarQualidadeAr };
