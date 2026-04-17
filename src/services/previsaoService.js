@@ -23,8 +23,7 @@ const fetch = require('node-fetch');
           return cached;
       }
 
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&forecast_days=16&timezone=aut
-  o&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunset,sunrise`;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&forecast_days=16&timezone=auto&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunset,sunrise`;
       const response = await fetch(url);
       const data = await response.json();
 
