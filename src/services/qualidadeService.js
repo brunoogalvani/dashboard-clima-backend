@@ -45,4 +45,48 @@
     return resultado;
   }
 
-  module.exports = { buscarQualidadeAr };
+
+  async function buscarHistoricoQualidade(cidade, pastDays = 1) {
+    
+ const cacheKey = `historico:${cidade.toString().toLowerCase().trim()}:${pastDays}`;
+
+  const cached = cache.get(cacheKey);
+  if (cached) {
+    console.log(`[CACHE HIT] ${cacheKey}`);
+    return cached;
+  }
+
+  const lat = -23.55;
+  const lon = -46.63;
+  const url =
+    `https://air-quality-api.open-meteo.com/v1/air-quality` +
+    `?latitude=${lat}&longitude=${lon}` +
+    `&hourly=us_aqi,pm2_5,pm10` +
+    `&past_days=${pastDays}&forecast_days=1`;
+
+  const response = await fetch(url);
+  const data = await response.json();
+  if (data.error) {
+    throw new Error(data.reason || "Erro ao buscar histórico de qualidade do ar");
+  }
+
+
+  const serie = data.hourly.time.map((t, i) => ({
+    time: t,
+    us_aqi: data.hourly.us_aqi[i],
+    pm2_5: data.hourly.pm2_5[i],
+    pm10: data.hourly.pm10[i],
+  }));
+
+
+  const resultado = {
+    cidade,
+    pastDays,
+    serie,
+  };
+
+  cache.set(cacheKey, resultado, 1800);
+  return resultado;
+}
+
+module.exports = { buscarQualidadeAr, buscarHistoricoQualidade };
