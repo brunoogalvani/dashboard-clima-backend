@@ -13,7 +13,7 @@ dotenv.config()
 const app = express();
 
 app.use(cors({
-  origin: ['https://pima-frontend.vercel.app','http://localhost:5173']
+  origin: ['https://pima-frontend-ck0b4ww3b-pima-frontend.vercel.app/','https://pima-frontend.vercel.app','http://localhost:5173','https://www.pima.dev.br','https://pima.dev.br']
 }));
 
 app.use('/api', climaRoutes);
